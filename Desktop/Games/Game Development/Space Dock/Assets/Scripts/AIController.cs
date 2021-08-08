@@ -5,13 +5,14 @@ using UnityEngine;
 
 public class AIController : MonoBehaviour {
 
+    //public GameObject targetMarker;
     public GameObject thrusterExhaust;
     public GameObject ccwRCSExhaust;
     public GameObject cwRCSExhaust;
     public Bullet pdcBullet;
     public Torpedo torpedoPrefab;
     public ParticleSystem deathExplosion;
-    
+
     public enum Attitudes {stalking, guarding}
     public Attitudes attitude;
 
@@ -82,7 +83,7 @@ public class AIController : MonoBehaviour {
         startPosition = transform.position;
         psLastContactTime = Time.time - stalkerGiveUpDelay; // we don't want the AI controller to be waiting to give up from the beginning of the game. It needs to detect the player first
     }
-	
+
 	// Update is called once per frame
 	void Update () {
         // only engage in combat behaviour if the player is detected
@@ -90,7 +91,7 @@ public class AIController : MonoBehaviour {
 
         if (canDetectTarget(ps.transform))
         {
-            // the AI will always engage and pursue the player 
+            // the AI will always engage and pursue the player
             if (attitude == Attitudes.stalking || attitude == Attitudes.guarding)
             {
                 shadowPlayer(minStalkRange, maxStalkRange);
@@ -131,7 +132,7 @@ public class AIController : MonoBehaviour {
 
                 RaycastHit rh;
                 // check if the player is in line of sight (other AI ships won't block sensors) because the player is on another layer
-                if (Physics.Raycast(transform.position, targetDir, out rh, Mathf.Infinity, LayerMask.GetMask("PlayerStuff"))) 
+                if (Physics.Raycast(transform.position, targetDir, out rh, Mathf.Infinity, LayerMask.GetMask("PlayerStuff")))
                 {
                     bool result = rh.collider.GetComponent<PlayerShip>() && !hiddenInBlindSpot && inRange; // if in range, and not in blind spot, and is the player
 
@@ -169,7 +170,7 @@ public class AIController : MonoBehaviour {
                     return false; // return false if the ray cast didn't work
                 }
             }
-            else // if the target is something else than we only care if its outside the radar blind spot 
+            else // if the target is something else than we only care if its outside the radar blind spot
             {
                 return !hiddenInBlindSpot;
             }
@@ -206,7 +207,7 @@ public class AIController : MonoBehaviour {
             disengageTimer -= Time.deltaTime;
         }
     }
-    
+
     void wander()
     {
         float wanderDistance = Vector3.Distance(wanderDestination, transform.position);
@@ -315,7 +316,7 @@ public class AIController : MonoBehaviour {
                 }
 
                 // we must check to see if the current target is even detectable. A missile in the ships blind spot angle should not be targeted for example.
-                // I would shape colliders in nice pie cut-out shapes if I could but this is the best I can do. 
+                // I would shape colliders in nice pie cut-out shapes if I could but this is the best I can do.
                 // Targets in the blind spot will be put back into the queue until they are no longer in the blind spot
                 if (canDetectTarget(currentTarget) == false && targetQueue.Count > 0)
                 {
@@ -363,7 +364,7 @@ public class AIController : MonoBehaviour {
         tpdSafety = true;
 
         yield return new WaitForSeconds(tpdReloadSpd);
-        
+
         if (tpdMag < tpdMagSize)
         {
             tpdMag++;
@@ -376,6 +377,7 @@ public class AIController : MonoBehaviour {
     {
         if (pdcSafety == false)
         {
+            //print(currentTarget); // what is the current target
             Vector3 target = currentTarget.position;
             float distance = (target - transform.position).magnitude;
 
@@ -426,7 +428,18 @@ public class AIController : MonoBehaviour {
                             return;
                         }
 
+                        // extrapolating less is needed when shooting at torpedos (I don't know why)
+                        if(currentTarget.GetComponent<Torpedo>())
+                        {
+                          t = 0.125f*t;
+                        }
+
                         Vector3 ip = (tv * t) + currentTarget.position; // extrapolate the intercept position (future position) of the target at time "t"
+
+                        // spawn something at the intercept point
+                        //GameObject marker = Instantiate(targetMarker,ip,Quaternion.identity) as GameObject;
+                        //Destroy(marker,3f);
+
                         Vector3 bulletForce = (ip - pos.position).normalized * bs;
                         Vector3 bulletSpread = new Vector3(Random.value * maxPDCSpread, Random.value * maxPDCSpread, 0f);
                         bulletForce += bulletSpread;
@@ -439,10 +452,12 @@ public class AIController : MonoBehaviour {
                         if (rb.velocity.magnitude > 10f) // only add the ship velocity vector if moving fast
                         {
                             bulletRB.velocity = rb.velocity + bulletForce;
+                            bullet.GetComponent<Bullet>().setStartVelocity(rb.velocity + bulletForce);
                         }
                         else
                         {
                             bulletRB.velocity = bulletForce;
+                            bullet.GetComponent<Bullet>().setStartVelocity(bulletForce);
                         }
                         //bulletRB.AddForce(bulletForce);
 
@@ -708,14 +723,19 @@ public class AIController : MonoBehaviour {
         // Whenever this ship is hit while not currently engaged (wandering), make it wander towards the direction that the projectile came from
         if (canDetectTarget(ps.transform) == false)
         {
+            Vector3 displacement = ps.transform.position - transform.position;
+            float randomScaler = Mathf.Pow(displacement.magnitude,0.5f); // sqaure root of displacement magnitude
+            Vector3 randomPos = new Vector3(Random.Range(-randomScaler,randomScaler),Random.Range(-randomScaler,randomScaler),0f);
+            // the wanderDestination should be somewhat near the player's position plus some uncertainty, depending on distance
+            Vector3 destination = ps.transform.position + randomPos;
+
             if (col.GetComponent<Torpedo>())
             {
                 Torpedo tpd = col.GetComponent<Torpedo>();
 
                 if (tpd.getHarmsPlayer() == false) // if this torpedo came from the player
                 {
-                    Vector3 tpdVel = tpd.GetComponent<Rigidbody>().velocity;
-                    wanderDestination = tpdVel * -stalkerWanderRange;
+                    wanderDestination = destination;
                 }
             }
             else if (col.GetComponent<Bullet>())
@@ -724,8 +744,7 @@ public class AIController : MonoBehaviour {
 
                 if (bullet.getHarmsPlayer() == false) // if this bullet came from the player
                 {
-                    Vector3 bulletVel = bullet.GetComponent<Rigidbody>().velocity;
-                    wanderDestination = bulletVel * -stalkerWanderRange; // make the displacement of the destination opposite to the velocity's direction. We are concerned with where the bullet came from
+                    wanderDestination = destination;
                 }
             }
         }

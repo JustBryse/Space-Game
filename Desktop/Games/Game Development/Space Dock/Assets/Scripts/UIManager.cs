@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
 
+    public GameObject sensorLockedPanel;
     public Image pausePanel;
     public Slider playerHitPointsSlider;
     public Button pdcReloadButton;
@@ -37,7 +38,7 @@ public class UIManager : MonoBehaviour {
     RectTransform mapCamBoxRT; // the rectTransform of the mapCameraBox
     RectTransform rmrt; // recttransform of radar manager
     PlayerShip ps;
-    Transform inViewTransform; // the gameObject that the camera will follow. 
+    Transform inViewTransform; // the gameObject that the camera will follow.
 
     int currentCamScale; // the current camera zoom
     Vector2 startMapAnchoredPos; // stores the initial anchored position of the radar screen
@@ -185,22 +186,27 @@ public class UIManager : MonoBehaviour {
             orientation = 360f - orientation;
         }
 
-        string targetLocked = "No";
+        //string targetLocked = "No";
 
         if (ps.isTargetLocked())
         {
-            targetLocked = "Yes";
+            //targetLocked = "Yes";
+            sensorLockedPanel.SetActive(true);
+        }
+        else
+        {
+            sensorLockedPanel.SetActive(false);
         }
 
         float hitPointPercentage = Mathf.Round(ps.getHitpoints() / ps.getMaxHitPoints() * 100f);
 
-        shipSpeedText.text = 
+        shipSpeedText.text =
         ">Speed: " + speed + " m/s" + "\n"
         + ">Heading: " + Mathf.Round(direction) + "\n"
         + ">Orientation: " + Mathf.Round(orientation) + "\n"
         + ">Hull Armour: " + hitPointPercentage + "%" + "\n"
-        + ">Radar Sig: " + Mathf.Round(ps.getRadarSig()) + " m" + "\n"
-        + ">Target Locked: " + targetLocked;
+        + ">Radar Sig: " + Mathf.Round(ps.getRadarSig()) + " m"; //+ "\n"
+        //+ ">Target Locked: " + targetLocked;
     }
 
     public void toggleCrewmanCard()
@@ -258,7 +264,7 @@ public class UIManager : MonoBehaviour {
         {
             crewIndex--;
         }
-        
+
         {
             crewIndex = crew.Count - 1;
         }
@@ -448,7 +454,7 @@ public class UIManager : MonoBehaviour {
             deactivatePDC();
             StartCoroutine(ps.reloadPDCMag());
             pdcReloadButton.interactable = false; // dont let the player reload while reloaded
-            
+
             // also deactivate the pdc toggle buttons because they can change the pdcSafety flag in the middle of a reload. This would be bad
             activatePDCButton.interactable = false;
             deactivatePDCButton.interactable = false;
@@ -514,4 +520,3 @@ public class UIManager : MonoBehaviour {
         pausePanel.gameObject.SetActive(false);
     }
 }
-

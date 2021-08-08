@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour {
             cwrcsModules.Add(rcs.GetComponent<Module>());
         }
     }
-	
+
 	// Update is called once per frame
 	void Update () {
         controlShip();
@@ -194,6 +194,12 @@ public class PlayerController : MonoBehaviour {
         string shipSpeedMessage = "Speed: " + ((int)rb.velocity.magnitude) + " m/s";
         uim.setShipInfoText(rb.velocity, transform);
         uim.setUIArrows(rb.velocity, transform.up);
+
+        // toggles the sensor circle around the player ship that shows the range of the player ship's sensor emissions
+        if(Input.GetKeyDown(KeyCode.C))
+        {
+            ps.toggleSensorSigCircle();
+        }
     }
 
 }

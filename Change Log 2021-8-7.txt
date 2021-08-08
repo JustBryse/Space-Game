@@ -1,0 +1,11 @@
+Date: 2021-8-7
+
+Additions:
+- Added a UI panel that appears to notify the player when they are detected by the AI. 
+- Added a toggleable circle around the player ship that shows the range at which an AI
+can detect the player ship.
+Changes: 
+- Changed AI wandering so that if the AI is hit while the player is not detected, 
+the AI will wander in the general direction from where the attack came from.
+Fixes: 
+- Fixed AI bug that caused inaccurate PDC aiming when shooting at incoming torpedoes.

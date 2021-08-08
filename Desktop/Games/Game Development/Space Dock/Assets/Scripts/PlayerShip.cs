@@ -14,6 +14,7 @@ public class PlayerShip : MonoBehaviour {
     public List<Transform> pdcPositions = new List<Transform>(); // the pdc spawn points
     public Transform torpedoTube; // this is not the torpedo module but just the torpedo spawn point
     public Transform railGun; // the location where the railgun bullets will spawn
+    public GameObject sensorSigCircle;
 
     public float startHitPoints = 300f;
     public float blindSpotAngle = 60f;
@@ -22,7 +23,7 @@ public class PlayerShip : MonoBehaviour {
     public float rsCoolDown = 3f; // the time that must past before the radarSig can go down
     public float rsRecovery = 1f; // the rate at which radarSig goes down
     // radar sig mods represent how much larger the radar sig will become when certain events happen
-    public float tpdRS = 50f; 
+    public float tpdRS = 50f;
     public float pdcRS = 1f;
     public float thrustRS = 100f;
 
@@ -79,7 +80,7 @@ public class PlayerShip : MonoBehaviour {
                 sensorModule = mod;
             }
         }
-        
+
         generateRandomCrew(5);
 
         torpMag = torpMagSize;
@@ -114,13 +115,14 @@ public class PlayerShip : MonoBehaviour {
                 {
                     Vector3 targetPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0f));
                     targetPos.z = 0f;
-                    Vector3 force = (targetPos - launchPos.position).normalized * pdcMuzzleSpd * Time.deltaTime;
+                    Vector3 force = (targetPos - launchPos.position).normalized * pdcMuzzleSpd * Time.deltaTime / 25f;
                     GameObject bullet = (GameObject)Instantiate(bulletPrefab.gameObject, launchPos.position, Quaternion.identity);
 
                     bullet.GetComponent<Bullet>().setSpawner(gameObject);
                     Rigidbody bulletRB = bullet.GetComponent<Rigidbody>();
                     bulletRB.velocity = rb.velocity;
-                    bulletRB.AddForce(force);
+                    //bulletRB.AddForce(force);
+                    bullet.GetComponent<Bullet>().setStartVelocity(rb.velocity + force);
 
                     Vector3 direction = (targetPos - bullet.transform.position).normalized;
 
@@ -185,7 +187,7 @@ public class PlayerShip : MonoBehaviour {
     public void fireTorpedo(Tangible target)
     {
         // both torpedo tube and sensors must work to fire torpedos
-        if (torpedoTube.GetComponent<Module>().isOnline() && sensorModule.isOnline() && torpSafety == false && torpMag > 0) 
+        if (torpedoTube.GetComponent<Module>().isOnline() && sensorModule.isOnline() && torpSafety == false && torpMag > 0)
         {
             GameObject torp = (GameObject)Instantiate(torpedoPrefab.gameObject, torpedoTube.position, Quaternion.identity);
             torp.GetComponent<Rigidbody>().velocity = rb.velocity;
@@ -251,7 +253,7 @@ public class PlayerShip : MonoBehaviour {
         uim.finishPDCReload();
     }
 
-    // reloads a single torpedo. Note that the UIM calls this function and checks if a reload is possible first. The 
+    // reloads a single torpedo. Note that the UIM calls this function and checks if a reload is possible first. The
     public IEnumerator reloadTorpedoMag()
     {
         torpSafety = true; // turn off torpedo launcher
@@ -311,7 +313,7 @@ public class PlayerShip : MonoBehaviour {
         uim.setPlayerHitPointsSlider(hitPoints, startHitPoints);
         uim.setShipInfoText(rb.velocity, transform);
     }
- 
+
     // while not emitting emissions, the radar sig will go down
     // called form update()
     void decreaseRadarSig()
@@ -324,6 +326,9 @@ public class PlayerShip : MonoBehaviour {
         {
             rsTimer -= Time.deltaTime;
         }
+
+        // update the scale of the sensor sig radius object
+        sensorSigCircle.transform.localScale = new Vector3(radarSig*2,radarSig*2,0);
     }
 
     // called whenever a thruster or weapon is fired or detectable emissions are released
@@ -348,6 +353,9 @@ public class PlayerShip : MonoBehaviour {
         {
             radarSig = maxRadarSig;
         }
+
+        // update the scale of the sensor sig radius object
+        sensorSigCircle.transform.localScale = new Vector3(radarSig*2,radarSig*2,0);
     }
 
     public float getThrusterRS()
@@ -371,10 +379,11 @@ public class PlayerShip : MonoBehaviour {
         if (targeted == false && flag == true)
         {
             float volume = 1f / (float)Camera.main.orthographicSize;
-            //AudioSource.PlayClipAtPoint(targetedSound, transform.position, volume);
+            //AudioSource.PlayClipAtPoint(targetedSound, Camera.main.transform.position, volume);
         }
 
         targeted = flag;
+        uim.setShipInfoText(rb.velocity,transform);
     }
 
     public float getHitpoints()
@@ -449,5 +458,12 @@ public class PlayerShip : MonoBehaviour {
     public Module getSensorModule()
     {
         return sensorModule;
+    }
+
+    // toggles the visible range of the player's sensor emissions
+    public void toggleSensorSigCircle()
+    {
+      bool flag = sensorSigCircle.activeInHierarchy;
+      sensorSigCircle.SetActive(!flag);
     }
 }

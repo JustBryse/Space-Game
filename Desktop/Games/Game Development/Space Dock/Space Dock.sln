@@ -1,7 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2015
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Space Dock.CSharp", "Space Dock.CSharp.csproj", "{D6A8A983-FACD-7F9E-A92F-C5FBB4CDBA42}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{BDFDF647-3CA6-A723-8FA0-40BD54EE67DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D6A8A983-FACD-7F9E-A92F-C5FBB4CDBA42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D6A8A983-FACD-7F9E-A92F-C5FBB4CDBA42}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D6A8A983-FACD-7F9E-A92F-C5FBB4CDBA42}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D6A8A983-FACD-7F9E-A92F-C5FBB4CDBA42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDFDF647-3CA6-A723-8FA0-40BD54EE67DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDFDF647-3CA6-A723-8FA0-40BD54EE67DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDFDF647-3CA6-A723-8FA0-40BD54EE67DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDFDF647-3CA6-A723-8FA0-40BD54EE67DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

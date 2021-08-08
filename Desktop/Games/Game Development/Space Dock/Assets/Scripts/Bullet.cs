@@ -26,6 +26,11 @@ public class Bullet : MonoBehaviour {
         Destroy(gameObject, selfDestructDelay);
 	}
 
+  void Update()
+  {
+    correctVelocity();
+  }
+
     void OnTriggerEnter(Collider col)
     {
         if (harmsPlayer)
@@ -79,6 +84,14 @@ public class Bullet : MonoBehaviour {
         Destroy(gameObject);
     }
 
+    void correctVelocity()
+    {
+      if(startVelocity != null)
+      {
+        rb.velocity = startVelocity;
+      }
+    }
+
     // recieves the gameObject that spawned this bullet
     public void setSpawner(GameObject spawner)
     {
@@ -88,6 +101,11 @@ public class Bullet : MonoBehaviour {
     public bool getHarmsPlayer()
     {
         return harmsPlayer;
+    }
+
+    public void setStartVelocity(Vector3 startVelocity)
+    {
+        this.startVelocity = startVelocity;
     }
 
 }
