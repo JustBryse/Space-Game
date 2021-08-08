@@ -1,0 +1,7 @@
+Date: 2021-8-8
+
+Additions:
+- Added a level select menu in the start screen
+- When the player dies the game returns to the start screen
+Fixes: 
+- Fixed a bug that prevented AI torpedos from sensor locking the player ship
