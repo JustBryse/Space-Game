@@ -7,7 +7,7 @@ Controls ------------------------------------------------
 - Roll Ship: q, e
 - Fire Thruster: spacebar
 - Toggle Sensor Emission Range: c
-- Fire torpedoes: Select a contact on the minimap, press "fire torpedo" in the contact panel.
+- Fire Torpedoes: Select a contact on the minimap, press "fire torpedo" in the contact panel.
 - Free Camera View: Hold right click and move mouse around.
 - Contact Camera View: Select a contact from the minimap, press the view button in the contact panel.
 - Returning to Ship View: Click the view button on the orientation panel (the panel that looks like a clock).
@@ -18,7 +18,8 @@ Important Features ---------------------------------------
 Stealth: 
 - Your ship has an emission signature radius that can be seen in the ship info panel or by pressing "c".
 - When an NPC ship enters your emission signature radius it will detect you. 
-- You and NPC ships have a sensor blind spot that is directly behind the main drive. Firing the main thruster blinds you to contacts that are behind your ship.
+- This game features sensor shadows. That is, an NPC or NPC torpedo can hide in the sensor shadow of other NPC ships and torpedos. Move perpendicular with respect to the vectors of incoming contacts to defeat this.
+- You and NPC ships have a sensor blind spot that is directly behind the main thruster. Firing the main thruster blinds you to contacts that are behind your ship.
 - You will be notified near the ship info panel when an NPC ship or torpedo has sensor locked you (this means you are detected and being pursued).
 - Gas clouds are environmental features that block all sensors.  
 - Your sensors will be completely useless when inside a gas cloud (your minimap will be disabled).
